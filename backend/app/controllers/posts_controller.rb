@@ -3,7 +3,7 @@ class PostsController < ApplicationController
     # Get users
     get '/posts' do
       posts = Post.all
-      posts.to_json(include: :user)
+      posts.to_json(include: [:user, comments: {include: :user}])
     end
   
   # Add Post
@@ -11,6 +11,11 @@ class PostsController < ApplicationController
       title =  params[:title]
       content = params[:content]
       user_id = params[:user]
+
+      puts("Title ",params[:title])
+      puts("Content ",content)
+      puts("User ",user_id)
+      
 
       if(title.present? || content.present? || user_id.present? )
         users_count = User.where(id: user_id).count()
@@ -28,7 +33,7 @@ class PostsController < ApplicationController
           message.to_json
         end
       else
-          error = {:success => "Ensure that all fields are not null!"}
+          error = {:error  => "Ensure that all fields are not null!"}
           error.to_json
       end
   end
